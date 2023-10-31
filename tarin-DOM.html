@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="header">
+    <h1 class="heading">Train App</h1>
+      </div>
+    <div class="container">
+    <input type="text" id="current" class="inputAll" placeholder="Enter Current City">
+    <input type="text" id="destination" class="inputAll" placeholder="Enter Destination City">
+    <input type="date" id="date" class="inputAll" placeholder="Enter Destination City">
+    <button id="btn" class="btn" onclick="submit()">Submit</button>
+    <h3 id = 'output'></h3>
+    </div>
+
+    <script>
+        function fetchData(callback){
+            setTimeout(() => {
+                  const data = [
+      { currentCity: 'multan', destination: 'lahore', time: '8:00 AM', price: 900 },
+      { currentCity: 'lahore', destination: 'multan', time: '8:00 PM', price: 900 },
+      { currentCity: 'karachi', destination: 'multan', time: '9:00 AM', price: 1200 },
+      { currentCity: 'multan', destination: 'karachi', time: '10:00 PM', price: 1200 },
+      { currentCity: 'lahore', destination: 'karachi', time: '11:00 AM', price: 2500 },
+      { currentCity: 'karachi', destination: 'lahore', time: '12:00 PM', price: 2500 },
+      { currentCity: 'lahore', destination: 'islamabad', time: '1:00 PM', price: 1100 },
+      { currentCity: 'islamabad', destination: 'lahore', time: '1:00 AM', price: 1100 },
+      { currentCity: 'lahore', destination: 'peshawar', time: '2:00 PM', price: 1700 },
+      { currentCity: 'peshawar', destination: 'lahore', time: '2:00 AM', price: 1700 },
+      { currentCity: 'peshawar', destination: 'Islamabad', time: '3:00 PM', price: 1000 },
+      { currentCity: 'islamabad', destination: 'peshawar', time: '2:00 AM', price: 1000 },
+    ];
+        callback(data)
+            }, 1000);
+        }
+        function trainDetails(curCity,destination,date){
+            return new Promise((res,rej)=>{
+                fetchData((data)=>{
+
+                    const filterValue = data.filter((x)=> curCity == x.currentCity && destination == x.destination && date )
+                    if(filterValue.length > 0){    
+                        const results = filterValue.map((val)=>{
+                            const result1 = val.price;
+                            const result2 = val.time;
+                            return `Price is : ${result1}, Time is: ${result2}`
+                        })                  
+                        res(results)
+                    }else{
+                        rej('404 Page not found')
+                    }
+                });
+            });
+        }
+
+        function submit(){
+            let count = 0;
+            const dataArr = [];
+            const curCity = document.getElementById('current').value.toLowerCase();
+            const destination = document.getElementById('destination').value.toLowerCase();
+            const date = document.getElementById('date').value;
+            const outPut = document.getElementById('output')
+            document.getElementById('current').value = '';
+            document.getElementById('destination').value = '';
+            document.getElementById('date').value = '';
+            // console.log(curCity);
+            // console.log(destination);
+            // console.log(date);
+            trainDetails(curCity,destination,date)
+            .then((values)=>{
+                values.forEach(value => { 
+                    dataArr.push(value);                 
+                    outPut.innerHTML = dataArr;
+                    count++;
+                    console.log(value);
+                });
+            }).catch((err)=>{
+                dataArr.push(err);                 
+                outPut.innerHTML = dataArr;
+                console.log(err);
+            })
+            
+        }
+    </script>
+</body>
+</html>
